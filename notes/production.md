@@ -1,0 +1,3 @@
+- Replace rule-based parsing with LLM for flexible queries.
+- Add dataset citation metadata in every answer.
+- Keep local-only deployment for data sovereignty.

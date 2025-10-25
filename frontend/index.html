@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Project Samarth Q&A</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+            max-width: 800px;
+        }
+        h1 {
+            color: #2F4F4F;
+        }
+        textarea {
+            width: 100%;
+            height: 80px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        pre {
+            background-color: #f4f4f4;
+            padding: 15px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <h1>Project Samarth Q&A</h1>
+    <textarea id="question" placeholder="Type your question here..."></textarea>
+    <br>
+    <button onclick="askQuestion()">Ask Question</button>
+    <h3>Answer:</h3>
+    <pre id="answer">Waiting for your question...</pre>
+
+    <script>
+        async function askQuestion() {
+            const question = document.getElementById('question').value.trim();
+            const answerEl = document.getElementById('answer');
+
+            if (!question) {
+                answerEl.textContent = "Please enter a question first.";
+                return;
+            }
+
+            answerEl.textContent = "Fetching answer...";
+
+            try {
+                const response = await fetch("http://127.0.0.1:8000/query", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ question: question })
+                });
+
+                // Check if backend returned JSON
+                if (!response.ok) {
+                    const text = await response.text();
+                    answerEl.textContent = `Error: ${response.status}\n${text}`;
+                    return;
+                }
+
+                const data = await response.json();
+
+                // Pretty-print the JSON answer
+                answerEl.textContent = JSON.stringify(data, null, 2);
+
+            } catch (err) {
+                answerEl.textContent = `Failed to fetch answer: ${err}`;
+            }
+        }
+    </script>
+</body>
+</html>
